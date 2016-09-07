@@ -8,115 +8,72 @@ import {
   TouchableHighlight
 } from 'react-native';
 import Button from 'apsl-react-native-button'
+
 const styles = require('../styles/');
 var moment = require('moment');
-var Shift = require('../models/shift.js');
-var Realm = require('realm');
 
-class AddShift extends Component {
-  state = {
-    startDate: new Date(),
-    endDate: new Date(),
-    showStartDatePicker: false,
-    showEndDatePicker: false,
-    minsBreak: "0",
-    hourlyRate: "0.00"
-  }
-  onStartDateChange = (date) => {
-    this.setState({startDate: date});
-  }
-  onEndDateChange = (date) => {
-    this.setState({endDate: date});
-  }
-  onChangeBreak = (text) => {
-    this.setState({minsBreak: text});
-  }
-  onChangeHourlyRate = (text) => {
-    this.setState({hourlyRate: text});
-  }
-  onStartDateFocus = () => {
-    this.state.showStartDatePicker
-      ? this.setState({showStartDatePicker: false})
-      : this.setState({showStartDatePicker: true})
-  }
-  onEndDateFocus = () => {
-    this.state.showEndDatePicker
-      ? this.setState({showEndDatePicker: false})
-      : this.setState({showEndDatePicker: true})
-  }
-  addShift = () => {
-    let realm = new Realm({schema: [Shift]});
+var AddShift = function (props) {
+  var showStartDatePicker = this.props.data.showStartDatePicker ?
+    <DatePickerIOS
+      date={this.props.data.startDate}
+      mode="datetime"
+      onDateChange={this.props.onStartDateChange}
+      style={styles.formDatePicker}
+    /> : <View />
 
-    realm.write(() => {
-      let newShift = realm.create('Shift', {
-        startDate: this.state.startDate,
-        endDate: this.state.endDate,
-        minsBreak: parseInt(this.state.minsBreak),
-        hourlyRate: parseFloat(this.state.hourlyRate)
-      });
-    });
-  }
-  render() {
-    var showStartDatePicker = this.state.showStartDatePicker ?
-      <DatePickerIOS
-        date={this.state.startDate}
-        mode="datetime"
-        onDateChange={this.onStartDateChange}
-        style={styles.formDatePicker}
-      /> : <View />
+  var showEndDatePicker = this.props.data.showEndDatePicker ?
+    <DatePickerIOS
+      date={this.props.data.endDate}
+      mode="datetime"
+      onDateChange={this.props.onEndDateChange}
+      style={styles.formDatePicker}
+    /> : <View />
 
-    var showEndDatePicker = this.state.showEndDatePicker ?
-      <DatePickerIOS
-        date={this.state.endDate}
-        mode="datetime"
-        onDateChange={this.onEndDateChange}
-        style={styles.formDatePicker}
-      /> : <View />
-
-    return (
-      <ScrollView style={styles.container}>
-        <View style={styles.form}>
-          <Text style={styles.formLabel}>START WORK:</Text>
-          <TouchableHighlight onPress={this.onStartDateFocus} underlayColor="#F9F9F9">
-            <TextInput
-              style={styles.formInput}
-              value={moment(this.state.startDate).format('llll')}
-              editable={false}
-            />
-          </TouchableHighlight>
-          {showStartDatePicker}
-          <Text style={styles.formLabel}>FINISH WORK:</Text>
-          <TouchableHighlight onPress={this.onEndDateFocus} underlayColor="#F9F9F9">
-            <TextInput
-              style={styles.formInput}
-              value={moment(this.state.endDate).format('llll')}
-              onFocus={this.onEndDateFocus}
-              editable={false}
-            />
-          </TouchableHighlight>
-          {showEndDatePicker}
-          <Text style={styles.formLabel}>BREAK DURATION (IN MINUTES):</Text>
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.form}>
+        <Text style={styles.formLabel}>START WORK:</Text>
+        <TouchableHighlight onPress={this.props.onStartDateFocus} underlayColor="#F9F9F9">
           <TextInput
             style={styles.formInput}
-            value={this.state.minsBreak.toString()}
-            onChangeText={this.onChangeBreak}
+            value={moment(this.props.data.startDate).format('llll')}
+            editable={false}
           />
-          <Text style={styles.formLabel}>HOURLY RATE (FORMAT: 0.00):</Text>
+        </TouchableHighlight>
+        {showStartDatePicker}
+        <Text style={styles.formLabel}>FINISH WORK:</Text>
+        <TouchableHighlight onPress={this.props.onEndDateFocus} underlayColor="#F9F9F9">
           <TextInput
             style={styles.formInput}
-            value={this.state.hourlyRate.toString()}
-            onChangeText={this.onChangeHourlyRate}
+            value={moment(this.props.data.endDate).format('llll')}
+            onFocus={this.props.onEndDateFocus}
+            editable={false}
           />
-          <Button
-            style={styles.formButton}
-            textStyle={styles.formButtonText}
-            onPress={this.addShift}>
-            ADD SHIFT
-          </Button>
-        </View>
-      </ScrollView>
-    );
-  }
+        </TouchableHighlight>
+        {showEndDatePicker}
+        <Text style={styles.formLabel}>BREAK DURATION (IN MINUTES):</Text>
+        <TextInput
+          style={styles.formInput}
+          value={this.props.data.minsBreak.toString()}
+          onChangeText={this.props.onChangeBreak}
+          keyboardType="number-pad"
+        />
+        <Text style={styles.formLabel}>HOURLY RATE (FORMAT: 0.00):</Text>
+        <TextInput
+          style={styles.formInput}
+          value={this.props.data.hourlyRate.toString()}
+          onChangeText={this.props.onChangeHourlyRate}
+          keyboardType="decimal-pad"
+        />
+        <Button
+          style={styles.formButton}
+          textStyle={styles.formButtonText}
+          onPress={this.props.onAddShift}>
+          ADD SHIFT
+        </Button>
+      </View>
+    </ScrollView>
+  );
 }
 
 module.exports = AddShift;

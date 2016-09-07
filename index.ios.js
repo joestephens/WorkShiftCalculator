@@ -12,7 +12,7 @@ const styles = require('./styles/');
 var Shifts = require('./pages/shifts.ios');
 var Payslips = require('./pages/payslips.ios');
 var Settings = require('./pages/settings.ios');
-var AddShift = require('./pages/addshift.ios');
+var AddShiftWrapper = require('./wrappers/AddShiftWrapper');
 
 class WorkShiftCalculator extends Component {
   render() {
@@ -47,8 +47,13 @@ class TabBar extends Component {
               onRightButtonPress: () => {
                 this.refs.nav.navigator.push({
                   title: "Add Shift",
-                  component: AddShift,
+                  component: AddShiftWrapper,
                   rightButtonTitle: 'Cancel',
+                  // passProps: {
+                  //   goBack: () => {
+                  //
+                  //   }
+                  // },
                   onRightButtonPress: () => { this.refs.nav.navigator.pop(); }
                 });
               },

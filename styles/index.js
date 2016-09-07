@@ -5,6 +5,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  shiftsContainer: {
+    flex: 1,
+    marginTop: 10
+  },
   jumbotron: {
     flex: 1,
     justifyContent: 'center',
@@ -61,8 +65,15 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  monthHeader: {
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 20,
+    fontWeight: 'bold',
+  },
   shift: {
-    marginBottom: 20,
+    marginTop: 10,
+    marginBottom: 10,
     marginLeft: 20,
     flex: 1,
     flexDirection: 'row',

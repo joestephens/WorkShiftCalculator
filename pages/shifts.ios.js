@@ -6,6 +6,7 @@ import {
   ListView,
   TouchableHighlight
 } from 'react-native';
+
 const styles = require('../styles/');
 var Realm = require('realm');
 var Shift = require('../models/shift');
@@ -35,6 +36,54 @@ var Shifts = React.createClass({
         </View>
       );
     } else {
+      var shiftsByMonth = {};
+
+      var groupByMonth = function(result) {
+          var month = moment(result.startDate).format("MMMM YYYY");
+
+          if (shiftsByMonth[month] === undefined) {
+            shiftsByMonth[month] = [];
+          };
+
+          shiftsByMonth[month].push(result);
+      }
+
+      this.state.shifts.map((result) => {
+        groupByMonth(result)
+      });
+
+      let months = Object.keys(shiftsByMonth).map((value, index) => {
+        let shifts = shiftsByMonth[value].map((shift, i) => {
+          return (
+            <View key={i}>
+              <TouchableHighlight>
+                <View style={styles.shift}>
+                  <View style={styles.shiftDate}>
+                    <Text style={styles.shiftDayText}>{moment(shift.startDate).format('ddd')}</Text>
+                    <Text style={styles.shiftDateText}>{moment(shift.startDate).format('D')}</Text>
+                  </View>
+                  <View style={styles.shiftInfo}>
+                    <Text style={styles.shiftHeader}>
+                      {moment(shift.startDate).format('LT')} to {moment(shift.endDate).format('LT')}
+                    </Text>
+                    <Text style={styles.shiftBreak}>
+                      {shift.minsBreak} minutes break
+                    </Text>
+                  </View>
+                </View>
+              </TouchableHighlight>
+            </View>
+          );
+        });
+
+        return (
+          <View key={index}>
+            <Text style={styles.monthHeader}>{value}</Text>
+            {shifts}
+          </View>
+        );
+      });
+
       let shifts = this.state.shifts.map((shift, i) => {
         return (
           <View key={i}>
@@ -59,8 +108,8 @@ var Shifts = React.createClass({
       });
 
       return (
-        <ScrollView style={styles.container}>
-          {shifts}
+        <ScrollView style={styles.shiftsContainer}>
+          {months}
         </ScrollView>
       );
     }
